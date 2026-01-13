@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using ReactCRUD.Data;
+using Microsoft.EntityFrameworkCore.SqlServer; 
 
 namespace ReactCRUD.Server
 {
@@ -12,6 +15,11 @@ namespace ReactCRUD.Server
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+
+            builder.Services.AddDbContext<ReactCRUDContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
 
             var app = builder.Build();
 

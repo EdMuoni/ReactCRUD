@@ -1,12 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
-//import type { JSX } from "react/jsx-dev-runtime";
-
-interface School {
-    id: string;
-    name: string;
-    address: string;
-    studentCount: number;
-}
+import {useEffect, useState } from "react";
+//import React, { useCallback, useEffect, useState } from "react";
+import type { School } from "../types/school";
 
 function SchoolList() {
     const [schools, setSchools] = useState<School[]>([]);

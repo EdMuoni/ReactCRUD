@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ReactCRUD.ApplicationServices.Services;
+using ReactCRUD.Core.ServiceInterface;
 using ReactCRUD.Data;
 using ReactCRUD.Server.ViewModels;
-using System.Linq;
+
 
 namespace ReactCRUD.Server.Controllers
 {
@@ -10,27 +12,50 @@ namespace ReactCRUD.Server.Controllers
     public class SchoolController : ControllerBase
     {
         private readonly ReactCRUDContext _context;
+        private readonly SchoolInterface _schoolInterface;
 
-        public SchoolController(ReactCRUDContext context)
+        public SchoolController
+            (
+                ReactCRUDContext context,
+                SchoolInterface schoolInterface
+            )
         {
             _context = context;
+            _schoolInterface = schoolInterface;
         }
 
-        //[HttpGet(Name = "SchoolList")]
-        [HttpGet]
+        [HttpGet(Name = "SchoolList")]
         public IActionResult Index()
         {
             var result = _context.Schools
                 .Select(x => new SchoolListViewModel
-                { 
+                {
                     Id = x.Id,
                     Name = x.Name,
                     Address = x.Address,
-                    StudentCount = x.StudentCount.ToString()
+                    StudentCount = x.StudentCount.ToString(),
                 })
                 .ToList();
 
             return Ok(result);
         }
+
+        public async Task<IActionResult> Details(Guid id)
+        {
+            var school = await _schoolInterface.SchoolDetailsView(id);
+            if (school == null)
+            {
+                return NotFound();
+            }
+            var result = new SchoolListViewModel
+            {
+                Id = school.Id,
+                Name = school.Name,
+                Address = school.Address,
+                StudentCount = school.StudentCount.ToString(),
+            };
+            return Ok(result);
+        }
+
     }
 }

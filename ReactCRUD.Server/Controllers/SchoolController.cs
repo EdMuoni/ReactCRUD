@@ -6,7 +6,7 @@ using System.Linq;
 namespace ReactCRUD.Server.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class SchoolController : ControllerBase
     {
         private readonly ReactCRUDContext _context;
@@ -16,7 +16,8 @@ namespace ReactCRUD.Server.Controllers
             _context = context;
         }
 
-        [HttpGet(Name = "SchoolList")]
+        //[HttpGet(Name = "SchoolList")]
+        [HttpGet]
         public IActionResult Index()
         {
             var result = _context.Schools

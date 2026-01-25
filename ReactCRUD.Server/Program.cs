@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using ReactCRUD.Data;
-using Microsoft.EntityFrameworkCore.SqlServer; 
+using Microsoft.EntityFrameworkCore.SqlServer;
+using ReactCRUD.ApplicationServices.Services;
+using ReactCRUD.Core.ServiceInterface;
+using System.Text.Json;
 
 namespace ReactCRUD.Server
 {
@@ -20,6 +23,14 @@ namespace ReactCRUD.Server
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            builder.Services.AddScoped<SchoolInterface, SchoolServices>();
+
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                });
 
             var app = builder.Build();
 

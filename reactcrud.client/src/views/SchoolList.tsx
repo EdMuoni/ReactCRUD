@@ -1,24 +1,34 @@
-import {useEffect, useState } from "react";
-//import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { School } from "../types/school";
+import { useNavigate } from "react-router-dom";
+
 
 function SchoolList() {
     const [schools, setSchools] = useState<School[]>([]);
 
-    useEffect(() => {
-        populateSchoolData();
+    const navigate = useNavigate();
+    const fetchSchools = useCallback(async () => {
+        try {
+            const response = await fetch("/api/school");
+            if (response.ok) {
+                const data = await response.json();
+                setSchools(data);
+            }
+        } catch (error) {
+            console.error("Fetch error:", error);
+        }
     }, []);
 
-    async function populateSchoolData() {
-        const response = await fetch("/api/school");
-        if (response.ok) {
-            const data = await response.json();
-            setSchools(data);
-        }
-    }
+    useEffect(() => {
+
+        (async () => {
+            await fetchSchools();
+        })();
+    }, [fetchSchools]);
+
 
     return (
-        <div>
+        <div className="container">
             <h1>School List</h1>
             <table>
                 <thead>
@@ -30,14 +40,25 @@ function SchoolList() {
                     </tr>
                 </thead>
                 <tbody>
-                    {schools.map((school) => (
-                        <tr key={school.id}>
-                            <td>{school.id}</td>
-                            <td>{school.name}</td>
-                            <td>{school.address}</td>
-                            <td>{school.studentCount}</td>
+                    {schools.length > 0 ? (
+                        schools.map((school) => (
+                            <tr key={school.id}>
+                                <td>{school.id}</td>
+                                <td>{school.name}</td>
+                                <td>{school.address}</td>
+                                <td>{school.studentCount}</td>
+                                <td>
+                                    <button onClick={() => navigate(`/details/${school.id}`)}>
+                                        View Details
+                                    </button>
+                                </td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan={4}>Loading schools or no data found...</td>
                         </tr>
-                    ))}
+                    )}
                 </tbody>
             </table>
         </div>
